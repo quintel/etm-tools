@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'bundler'
+Bundler.require(:default)
+
+require_relative '../lib/cp-scenario'
+
+opts = Slop.parse do |o|
+  o.banner = 'usage: cp-scenario beta 12345 [options]'
+  o.string '-d', '--dataset', 'Dataset for the new scenario'
+end
+
+unless opts.arguments.length >= 2
+  puts opts
+  exit
+end
+
+pastel = Pastel.new
+
+begin
+  api = CPScenario::API.new(CPScenario.translate_endpoint(opts.arguments[0]))
+  source = CPScenario::Scenario.new(api, opts.arguments[1])
+
+  target = CPScenario::Scenario.create(
+    api,
+    opts[:dataset] || source.dataset,
+    end_year: source.settings.end_year
+  )
+
+  # Take the user values from the source and combine with the inputs from the
+  # target, scale and re-save.
+
+  target.inputs.assign(CPScenario::Scaler.new(
+    source.inputs.user_values,
+    target.scaling_constant / source.scaling_constant
+  ).inputs)
+
+  target.save
+
+  puts CPScenario::Summary.new(target).summarize_copy(pastel)
+rescue RestClient::NotFound
+  puts pastel.red("Scenario not found: #{ARGV[1].inspect}")
+rescue RestClient::UnprocessableEntity => ex
+  puts pastel.red('Failed to save new scenario:')
+  puts
+  JSON.parse(ex.http_body)['errors'].each do |attribute, errors|
+    errors.each { |error| puts "* #{attribute} #{error}" }
+  end
+rescue RestClient::Exception => ex
+  puts pastel.red(ex)
+  puts ex.http_body
+rescue RuntimeError => ex
+  puts ex.message
+end
