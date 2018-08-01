@@ -26,7 +26,10 @@ module CPScenario
     #
     # Returns an Input.
     def self.from_api(data)
-      data = data.transform_keys(&:to_sym)
+      data = data.each_with_object({}) do |(key, value), hash|
+        hash[key.to_sym] = value
+      end
+
       from_hash(data.merge(key: data[:code]))
     end
 

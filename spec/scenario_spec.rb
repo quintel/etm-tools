@@ -24,8 +24,13 @@ RSpec.describe CPScenario::Scenario do
     end
 
     it 'returns the scenario settings' do
-      expect(subject.settings.to_h)
-        .to eq(api.scenario_data(subject)['scenario'].transform_keys(&:to_sym))
+      # Symbolize keys.
+      expected = api.scenario_data(subject)['scenario']
+        .each_with_object({}) do |(key, value), hash|
+          hash[key.to_sym] = value
+        end
+
+      expect(subject.settings.to_h).to eq(expected)
     end
   end
 
