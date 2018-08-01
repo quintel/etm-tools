@@ -43,8 +43,14 @@ rescue RestClient::NotFound
 rescue RestClient::UnprocessableEntity => ex
   puts pastel.red('Failed to save new scenario:')
   puts
-  JSON.parse(ex.http_body)['errors'].each do |attribute, errors|
-    errors.each { |error| puts "* #{attribute} #{error}" }
+  errs = JSON.parse(ex.http_body)['errors']
+
+  if errs.is_a?(Array)
+    errs.each { |error| puts "* #{error}" }
+  else
+    errs.each do |attribute, errors|
+      errors.each { |error| puts "* #{attribute} #{error}" }
+    end
   end
 rescue RestClient::Exception => ex
   puts pastel.red(ex)
