@@ -6,15 +6,14 @@ RSpec.describe CPScenario::Scenario do
 
   describe 'dataset' do
     it 'returns the API area code' do
-      area_code = api.scenario_data(subject)['scenario']['area_code']
+      area_code = api.scenario_data(subject)['area_code']
       expect(subject.dataset).to eq(area_code)
     end
   end
 
   describe 'scaling_constant' do
     it 'returns number of households from the API' do
-      households = api.scenario_data(subject)['gqueries']['households_number_of_residences']['present']
-      expect(subject.scaling_constant).to eq(households)
+      expect(subject.scaling_constant).to eq(api.scaling_constant(subject))
     end
   end
 
@@ -25,7 +24,7 @@ RSpec.describe CPScenario::Scenario do
 
     it 'returns the scenario settings' do
       # Symbolize keys.
-      expected = api.scenario_data(subject)['scenario']
+      expected = api.scenario_data(subject)
         .each_with_object({}) do |(key, value), hash|
           hash[key.to_sym] = value
         end

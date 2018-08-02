@@ -5,7 +5,9 @@ require 'ostruct'
 
 require 'rest-client'
 
+require_relative 'cp-scenario/action'
 require_relative 'cp-scenario/api'
+require_relative 'cp-scenario/compact_summary'
 require_relative 'cp-scenario/input'
 require_relative 'cp-scenario/input_collection'
 require_relative 'cp-scenario/scaler'

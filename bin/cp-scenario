@@ -17,44 +17,56 @@ end
 
 pastel = Pastel.new
 
+api = CPScenario::API.new(CPScenario.translate_endpoint(opts.arguments[0]))
+source = CPScenario::Scenario.new(api, opts.arguments[1])
+
 begin
-  api = CPScenario::API.new(CPScenario.translate_endpoint(opts.arguments[0]))
-  source = CPScenario::Scenario.new(api, opts.arguments[1])
-
-  target = CPScenario::Scenario.create(
-    api,
-    opts[:dataset] || source.dataset,
-    end_year: source.settings.end_year
-  )
-
-  # Take the user values from the source and combine with the inputs from the
-  # target, scale and re-save.
-
-  target.inputs.assign(CPScenario::Scaler.new(
-    source.inputs.user_values,
-    target.scaling_constant / source.scaling_constant
-  ).inputs)
-
-  target.save
-
-  puts CPScenario::Summary.new(target).summarize_copy(pastel)
+  # Make an API call to assert that the scenario exists.
+  source.settings
 rescue RestClient::NotFound
   puts pastel.red("Scenario not found: #{ARGV[1].inspect}")
-rescue RestClient::UnprocessableEntity => ex
-  puts pastel.red('Failed to save new scenario:')
-  puts
-  errs = JSON.parse(ex.http_body)['errors']
-
-  if errs.is_a?(Array)
-    errs.each { |error| puts "* #{error}" }
-  else
-    errs.each do |attribute, errors|
-      errors.each { |error| puts "* #{attribute} #{error}" }
-    end
-  end
+  exit(1)
 rescue RestClient::Exception => ex
-  puts pastel.red(ex)
-  puts ex.http_body
-rescue RuntimeError => ex
   puts ex.message
+  puts ex.http_body
+  exit(1)
+end
+
+Output = Struct.new(:success, :error, :pastel)
+
+# Clones a single scenario. Provide the source scenario, API, target dataset
+# (nil is acceptable when not changing the dataset) the the class to be used to
+# format the scenario summary.
+def run(source, api, dataset, output)
+  action = CPScenario::Action.new(source, api, dataset)
+  scenario = action.call
+
+  if action.success?
+    puts output.success.call(scenario, output.pastel)
+  else
+    puts output.error.call(action, output.pastel)
+  end
+end
+
+if opts[:dataset]&.include?(',')
+  datasets = opts[:dataset].split(',').reject(&:empty?).sort
+
+  # Shorter output when cloning to multiple datasets.
+  output = Output.new(
+    CPScenario::CompactSummary,
+    ->(action, _) { pastel.red("#{action.dataset}: error") },
+    pastel,
+  )
+else
+  datasets = [opts[:dataset]]
+
+  output = Output.new(
+    CPScenario::Summary,
+    ->(action, _) { action.errors },
+    pastel,
+  )
+end
+
+datasets.each do |dataset|
+  run(source, api, dataset, output)
 end

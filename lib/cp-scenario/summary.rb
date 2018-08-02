@@ -1,6 +1,10 @@
 module CPScenario
   # Summarizes a copied scenario.
   class Summary
+    def self.call(scenario, pastel)
+      new(scenario).summarize_copy(pastel)
+    end
+
     def initialize(scenario)
       @scenario = scenario
     end

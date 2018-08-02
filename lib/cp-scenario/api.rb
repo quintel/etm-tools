@@ -25,7 +25,29 @@ module CPScenario
     #
     # Returns a Hash.
     def scenario_data(scenario)
-      request(:put, scenario, '', gqueries: ['households_number_of_residences'])
+      request(:get, scenario)
+    end
+
+    # Public: Fetch the scaling constant for the given scenario.
+    #
+    # Fetches and caches the constants for all datasets. This is slightly slower
+    # if scaling only a single scenario, but much faster when scaling to more
+    # than two datasets simultaneously.
+    #
+    # Returns a Numeric.
+    def scaling_constant(scenario)
+      unless @scaling_constants
+        areas = JSON.parse(RestClient.public_send(
+          :get,
+          "#{api_url}/areas.json"
+        ))
+
+        @scaling_constants = Hash[areas.map do |area|
+          [area['area'], area['number_of_residences']]
+        end]
+      end
+
+      @scaling_constants[scenario.dataset.to_s]
     end
 
     # Public: Creates a new scenario for the given dataset key.
@@ -38,7 +60,7 @@ module CPScenario
       user_values = settings.delete(:user_values)
 
       JSON.parse(RestClient.post(
-        "#{@endpoint}/api/v3/scenarios",
+        "#{api_url}/scenarios",
         {
           scenario: settings.merge(
             area_code: dataset,
@@ -85,8 +107,12 @@ module CPScenario
       ))
     end
 
+    def api_url
+      "#{@endpoint}/api/v3"
+    end
+
     def base_url(scenario)
-      "#{@endpoint}/api/v3/scenarios/#{scenario.id}"
+      "#{api_url}/scenarios/#{scenario.id}"
     end
   end
 end

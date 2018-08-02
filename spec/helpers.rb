@@ -3,6 +3,7 @@ module Helpers
     instance_double(
       'CPScenario::API',
       scenario_data: scenario_data_response,
+      scaling_constant: 1337,
       inputs: input_data
     )
   end

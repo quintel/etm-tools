@@ -11,14 +11,19 @@ module CPScenario
     #
     # Returns the Scenario.
     def self.create(api, dataset, settings = {})
-      new(api, api.create_scenario(dataset, settings)['id'])
+      data = api.create_scenario(dataset, settings)
+      new(api, data['id'], settings: data)
     end
 
     # Public: Open a Scenario with the given ID. The scenario should already
     # exist on the server.
-    def initialize(api, id)
+    def initialize(api, id, settings: nil)
       @api = api
       @id = id
+
+      # Allows a call from create to provide the needed data without requiring
+      # an extra HTTP request.
+      @settings = OpenStruct.new(settings) unless settings.nil?
     end
 
     # Public: The key of the dataset used by the scenario.
@@ -33,7 +38,7 @@ module CPScenario
     #
     # Returns an OpenStruct.
     def settings
-      OpenStruct.new(data['scenario'])
+      @settings ||= OpenStruct.new(@api.scenario_data(self))
     end
 
     # Public: An array containing all inputs for the scenario, including those
@@ -51,22 +56,12 @@ module CPScenario
     #
     # Returns a numeric.
     def scaling_constant
-      data['gqueries']['households_number_of_residences']['present']
+      @api.scaling_constant(self)
     end
 
     # Public: Saves the user values to the scenario.
     def save
       @api.update_scenario(self)
-    end
-
-    private
-
-    # Fetches information about the scenario and the number of residences (used
-    # to scale scenarios) in one request.
-    #
-    # Returns a Hash.
-    def data
-      @data ||= @api.scenario_data(self)
     end
   end
 end

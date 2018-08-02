@@ -83,6 +83,21 @@ On this occasion, the scenario *has* been cloned, but CPScenario had to reduce
 the number of wind turbines from the desired 161k to 44k in order for the
 scenario to be valid.
 
+Copy to multiple datasets simultaneously by separating the dataset keys with a
+comma. In this mode, cp-scenario will produce shorter output, listing the
+datasets and the status of the cloned scenarios: green for success, yellow
+indicating one or more inputs were bounded, red for errors.
+
+```sh
+bin/cp-scenario beta 906772 --dataset uk,de
+
+# de: 909478 (13 inputs, 1 bounded)
+# uk: 909480
+```
+
+For more details on bounded inputs or errors, re-run cp-scenario specifying only
+the one (affected) dataset.
+
 #### Custom servers
 
 Instead of supplying "beta" or "production" as the server name, you may instead
