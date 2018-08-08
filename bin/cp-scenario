@@ -49,7 +49,7 @@ def run(source, api, dataset, output)
 end
 
 if opts[:dataset]&.include?(',')
-  datasets = opts[:dataset].split(',').reject(&:empty?).sort
+  datasets = opts[:dataset].split(',').reject(&:empty?)
 
   # Shorter output when cloning to multiple datasets.
   output = Output.new(
