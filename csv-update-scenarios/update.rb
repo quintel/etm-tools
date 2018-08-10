@@ -12,7 +12,7 @@ end
 def usage_and_exit!(code = 1)
   puts <<~TEXT
     Usage: ruby import.rb [server] [path-to-csv]
-    
+
     For example:
 
       ruby import.rb beta values.csv
@@ -23,7 +23,7 @@ def usage_and_exit!(code = 1)
   exit(code)
 end
 
-# Main function which imports slider values based on a row in the CSV. 
+# Main function which imports slider values based on a row in the CSV.
 def import_row(server, row, pastel)
   scenario_id, *values = row
   print "Importing scenario #{scenario_id}... "
@@ -72,7 +72,7 @@ if server.nil? || !server.start_with?('http')
   usage_and_exit!
 end
 
-if file.nil? || !File.exists?(file)
+if file.nil? || !File.exist?(file)
   puts "Could not find CSV file: #{file.inspect}\n"
   puts usage_and_exit!
 end
@@ -81,5 +81,5 @@ end
 # ------------
 
 CSV.read(file).each do |row|
-  import_row(server, row, pastel) unless row.first.match(/\D/)
+  import_row(server, row, pastel) unless row.first =~ /\D/
 end
