@@ -1,24 +1,12 @@
 require 'csv'
 require 'json'
 
-begin
-  tries ||= 0
+require 'bundler/inline'
 
-  require 'rest-client'
-  require 'pastel'
-rescue LoadError
-  if (tries += 1) < 2
-    puts 'Missing dependencies; attempting to install...'
-    system 'gem install rest-client pastel'
-    puts '-' * 30
-
-    Gem.clear_paths
-    retry
-  end
-
-  puts 'Could not install dependencies.'
-  puts 'Try running "gem install rest-client pastel".'
-  exit(1)
+gemfile do
+  source 'https://rubygems.org'
+  gem 'restclient'
+  gem 'pastel'
 end
 
 def usage_and_exit!(code = 1)
