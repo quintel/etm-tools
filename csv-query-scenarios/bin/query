@@ -27,7 +27,7 @@ opts = Slop.parse do |o|
   o.bool   '--help', 'usage information'
 end
 
-if opts[:help]
+if opts[:help] || ARGV.empty?
   puts opts
   exit
 end
