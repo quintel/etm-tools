@@ -1,9 +1,6 @@
 <h1 align="center">csv-query-scenarios</h1>
 <p align="center">Fetches GQuery results and saves to a CSV</p>
 
-This tool queries one or more ETEngine scenarios and dumps the results to a CSV
-file of your choosing.
-
 **Usage:** `bin/query [server] --scenarios [comma-separated-ids] --gqueries [comma-separated-queries]`
 
 ## Examples
@@ -36,13 +33,13 @@ progress bar will update you on the status of the script.
 The server option may be shorthand or a full server address.
 
 * `beta` or `staging` for the beta server.
-  For example: `bin/query beta --scenarios ...`
+  `bin/query beta --scenarios ...`
 
 * `production`, `pro`, or `live` for the production server.
-  For example: `bin/query production --scenarios ...`
+  `bin/query production --scenarios ...`
 
 * A full URL to use your own ETEngine server.
-  For example: `bin/query http://localhost:3000 --scenarios ...`
+  `bin/query http://localhost:3000 --scenarios ...`
 
 ### Scenarios in a file (`--scenarios-file`)
 
@@ -61,7 +58,7 @@ bin/query beta --scenarios-file ~/Documents/scenarios.txt --gqueries graph_year,
 ### Gqueries in a file (`--gqueries-file`)
 
 Like `--scenarios-file` (above), you may also write your Gquery list in a
-separate file -- with each gquery on a new line -- using `--gqueries-file`:
+separate file – with each gquery on a new line – using `--gqueries-file`:
 
 ```sh
 # Create a gqueries.txt file listing four gqueries.
