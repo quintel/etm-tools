@@ -1,9 +1,6 @@
 <h1 align="center">Tools</h1>
 <p align="center">Miscellaneous tools for working with the ETM</p>
 
-This repository is a collection of tools for creating, updating, and querying
-scenarios, and working with the ETM.
-
 ### cp-scenario
 
 cp-scenario is a small application which reads data from an ETEngine scenario

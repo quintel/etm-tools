@@ -4,7 +4,7 @@
 csv-query-scenarios queries one or more ETEngine scenarios and dumps the results
 to a CSV file of your choosing.
 
-Usage: `ruby query.rb [server] [comma-separated-ids] [comma-separated-gqueries]`
+Usage: `bin/query [server] --scenarios [comma-separated-ids] --gqueries [comma-separated-gqueries]`
 
 ### Examples
 
