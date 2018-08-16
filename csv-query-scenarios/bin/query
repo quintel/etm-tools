@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler'
+Bundler.require(:default)
+
+require_relative '../lib/csv-query-scenarios'
+
+pastel = Pastel.new
+
+# Helpers
+# -------
+
+def exit_with_message(msg, opts)
+  abort("#{msg}\n\n#{opts}")
+end
+
+# Arguments
+# ---------
+
+opts = Slop.parse do |o|
+  o.banner = 'usage: query.rb [server] [options]'
+  o.array  '--scenarios', 'comma-separated scenario IDs', delimiter: ','
+  o.array  '--gqueries', 'comma-separated gqueries', delimiter: ','
+  o.bool   '--help', 'usage information'
+end
+
+if opts[:help]
+  puts opts
+  exit
+end
+
+begin
+  config = CSVQueryScenarios::CLIHelper.configuration(opts)
+rescue RuntimeError => ex
+  exit_with_message(pastel.red(ex.message), opts)
+end
+
+# Run the script
+# --------------
+
+reducers = CSVQueryScenarios.reducers(config)
+
+opts[:scenarios].map do |scenario|
+  begin
+    CSVQueryScenarios.execute(
+      CSVQueryScenarios::Context.new(config.server, scenario, config.gqueries),
+      reducers
+    )
+  rescue RestClient::NotFound
+    abort(pastel.red("No such scenario: #{context.scenario}"))
+  rescue RestClient::UnprocessableEntity => ex
+    abort(pastel.red(JSON.parse(ex.http_body)['errors'].join(', ')))
+  end
+end

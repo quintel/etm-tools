@@ -15,3 +15,8 @@ are scaled to suit the new region.
 
 A simple Ruby script which reads a CSV file and updates scenarios, assigning the
 user values contained in the CSV.
+
+### csv-query-scenarios
+
+Queries an ETEngine server, requesting the GQuery values for one or more
+scenarios, providing the results for all scenarios in CSV format.
