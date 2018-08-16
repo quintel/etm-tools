@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require 'json'
 require 'csv'
+require 'json'
+require 'pathname'
 
 require 'rest-client'
 require 'pastel'

@@ -22,6 +22,8 @@ opts = Slop.parse do |o|
   o.banner = 'usage: query.rb [server] [options]'
   o.array  '--scenarios', 'comma-separated scenario IDs', delimiter: ','
   o.array  '--gqueries', 'comma-separated gqueries', delimiter: ','
+  o.string '--scenarios-file', 'path to a file containing scenario IDs'
+  o.string '--gqueries-file', 'path to a file containing gqueries'
   o.bool   '--help', 'usage information'
 end
 
@@ -41,7 +43,7 @@ end
 
 reducers = CSVQueryScenarios.reducers(config)
 
-opts[:scenarios].map do |scenario|
+config.scenarios.map do |scenario|
   begin
     CSVQueryScenarios.execute(
       CSVQueryScenarios::Context.new(config.server, scenario, config.gqueries),

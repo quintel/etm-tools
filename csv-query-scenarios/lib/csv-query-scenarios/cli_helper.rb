@@ -22,7 +22,9 @@ module CSVQueryScenarios
     #
     # Returns an array of strings.
     def gqueries_from_opts(opts)
-      gqueries = collection(opts[:gqueries])
+      assert_exclusive_collection_options!(opts, :gqueries)
+
+      gqueries = file_or_collection(opts[:gqueries_file], opts[:gqueries])
       raise 'Please specify at least one gquery' if gqueries.empty?
 
       gqueries
@@ -32,7 +34,9 @@ module CSVQueryScenarios
     #
     # Returns an array of integers.
     def scenarios_from_opts(opts)
-      scenarios = collection(opts[:scenarios])
+      assert_exclusive_collection_options!(opts, :scenarios)
+
+      scenarios = file_or_collection(opts[:scenarios_file], opts[:scenarios])
       raise 'Please specify at least one scenario ID' if scenarios.empty?
 
       scenarios.map { |id| Integer(id) }
@@ -57,10 +61,37 @@ module CSVQueryScenarios
       end
     end
 
+    # Returns a collection by reading the path (one element per line), when path
+    # is non-nil, or returns the enum as an array.
+    def file_or_collection(path, enum)
+      return collection(enum) unless path
+
+      raise "No such file: #{path.inspect}" unless File.exist?(path)
+
+      collection(File.foreach(path).map(&:strip))
+    end
+
+    private_class_method :file_or_collection
+
     # Takes an array argument from Slop and returns an array of non-empty
     # members.
     def collection(enum)
-      (enum.to_a || []).reject(&:empty?)
+      (enum.to_a || []).reject(&:empty?).uniq
     end
+
+    private_class_method :collection
+
+    # Asserts that the user didn't provide both --option and --option-file
+    # arguments.
+    def assert_exclusive_collection_options!(opts, option)
+      return if !opts[:"#{option}_file"] || collection(opts[option]).none?
+
+      raise(
+        "--#{option} and --#{option}-file are mutually exclusive; " \
+        "don't specify both"
+      )
+    end
+
+    private_class_method :assert_exclusive_collection_options!
   end
 end
