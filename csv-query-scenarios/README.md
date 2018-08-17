@@ -5,8 +5,8 @@
 
 ## Examples
 
-You want to know the values of `gquery_one` and `gquery_two` for scenarios 5, 6,
-and 10 on the beta server:
+Fetching the values of `gquery_one` and `gquery_two` for scenarios 5, 6, and 10
+on the beta server:
 
 ```sh
 bin/query beta --scenarios 5,6,10 --gqueries gquery_one,gquery_two
@@ -16,17 +16,16 @@ Scenario IDs and gquery keys should be comma-separated without any spaces.
 
 ### Outputting to a CSV file
 
-By default, `bin/query` will output the CSV one line at a time to your terminal.
-Since you probably want the CSV contents in a file, redirect the output of the
-command to a file of your choice by ending with `> path/to/output.csv`. The
-file _should not_ already exist. For example:
+By default, the CSV contents will be output one line at a time to the terminal.
+Redirect the output of the command to a CSV file by ending with
+`> path/to/output.csv`. For example:
 
 ```sh
 bin/query beta --scenarios 5,6,10 --gqueries graph_year,renewability,total_costs > ~/Documents/output.csv
 ```
 
-In this mode you won't see the CSV being output to your terminal, but instead a
-progress bar will update you on the status of the script.
+The CSV contents will no longer appear in in the terminal, but instead a
+progress bar will show the status of the script.
 
 ### Server
 
@@ -38,27 +37,27 @@ The server option may be shorthand or a full server address.
 * `production`, `pro`, or `live` for the production server.
   `bin/query production --scenarios ...`
 
-* A full URL to use your own ETEngine server.
+* A full URL to use a custom ETEngine server.
   `bin/query http://localhost:3000 --scenarios ...`
 
 ### Scenarios in a file (`--scenarios-file`)
 
-Instead of specifying each scenario on the command-line with `--scenarios`, you
-may instead use a file with one scenario ID on each line using the
-`--scenarios-file` option. For example:
+Instead of providing each scenario on the command-line with `--scenarios`, the
+`--scenarios-file` option may be used to specify a path to a file containing
+scenario IDs. Each scenario ID should be on a separate line.
 
 ```sh
 # Create a scenarios.txt file listing four scenario IDs.
 echo "916346\n916347\n916354\n916355\n" > ~/Documents/scenarios.txt
 
 # Use the scenarios file instead of --scenarios
-bin/query beta --scenarios-file ~/Documents/scenarios.txt --gqueries graph_year,renewability,total_costs
+bin/query beta --scenarios-file ~/Documents/scenarios.txt --gqueries renewability,total_costs
 ```
 
 ### Gqueries in a file (`--gqueries-file`)
 
-Like `--scenarios-file` (above), you may also write your Gquery list in a
-separate file – with each gquery on a new line – using `--gqueries-file`:
+Like `--scenarios-file` (above), `--gqueries-file` permits the use of a file to
+list the gqueries:
 
 ```sh
 # Create a gqueries.txt file listing four gqueries.
