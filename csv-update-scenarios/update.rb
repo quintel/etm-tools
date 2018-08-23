@@ -5,7 +5,7 @@ require 'bundler/inline'
 
 gemfile do
   source 'https://rubygems.org'
-  gem 'restclient'
+  gem 'rest-client'
   gem 'pastel'
 end
 
