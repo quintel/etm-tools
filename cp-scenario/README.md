@@ -98,6 +98,16 @@ bin/cp-scenario beta 906772 --dataset uk,de
 For more details on bounded inputs or errors, re-run cp-scenario specifying only
 the one (affected) dataset.
 
+#### Protected scenarios
+
+By defaults, scenarios created by cp-scenario are not marked as protected by
+ETEngine, and as a result will not receive updates when the model is changed. To
+protect your new scenarios include the `-p` or `--protect` option:
+
+```
+bin/cp-scenario beta 906768 --protect
+```
+
 #### Custom servers
 
 Instead of supplying "beta" or "production" as the server name, you may instead

@@ -11,10 +11,11 @@ module CPScenario
     #           different dataset to the source.
     #
     # Returns an Action.
-    def initialize(source, api, dataset = nil)
+    def initialize(source, api, dataset = nil, protect = false)
       @source   = source
       @api      = api
       @dataset  = dataset
+      @protect  = protect
       @success  = nil
       @errors   = []
     end
@@ -31,7 +32,8 @@ module CPScenario
       @scenario = CPScenario::Scenario.create(
         api,
         dataset,
-        end_year: source.settings.end_year
+        end_year: source.settings.end_year,
+        protected: @protect
       )
 
       @scenario.inputs.assign(CPScenario::Scaler.new(

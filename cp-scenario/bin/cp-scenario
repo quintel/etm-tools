@@ -7,6 +7,7 @@ require_relative '../lib/cp-scenario'
 
 opts = Slop.parse do |o|
   o.banner = 'usage: cp-scenario beta 12345 [options]'
+  o.boolean '-p', '--protect', 'Mark created scenarios as protected'
   o.string '-d', '--dataset', 'Dataset for the new scenario'
 end
 
@@ -37,8 +38,8 @@ Output = Struct.new(:success, :error, :pastel)
 # Clones a single scenario. Provide the source scenario, API, target dataset
 # (nil is acceptable when not changing the dataset) the the class to be used to
 # format the scenario summary.
-def run(source, api, dataset, output)
-  action = CPScenario::Action.new(source, api, dataset)
+def run(source, api, dataset, protect, output)
+  action = CPScenario::Action.new(source, api, dataset, protect)
   scenario = action.call
 
   if action.success?
@@ -68,5 +69,5 @@ else
 end
 
 datasets.each do |dataset|
-  run(source, api, dataset, output)
+  run(source, api, dataset, opts[:protect], output)
 end
