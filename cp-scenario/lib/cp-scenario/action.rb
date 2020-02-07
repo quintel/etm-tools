@@ -61,7 +61,7 @@ module CPScenario
       @errors = ["#{ex}\n#{ex.http_body}"]
       @success = false
     rescue => ex
-      @errors = ["#{ex.message}\n#{ex.backtrace}"]
+      @errors = ["#{ex.message}\n#{ex.backtrace.join("\n")}"]
       @success = false
     end
   end
