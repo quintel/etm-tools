@@ -35,14 +35,18 @@ def import_row(server, row, pastel)
   )
 
   puts pastel.green("done (#{values.length} user values).")
+  true
 rescue RestClient::NotFound
   puts pastel.red("scenario not found.")
+  false
 rescue RestClient::UnprocessableEntity => ex
   puts pastel.red("validation error.")
 
   JSON.parse(ex.http_body)['errors'].each do |msg|
     puts pastel.red("   * #{msg}")
   end
+
+  false
 end
 
 # Takes the row values and returns a hash of user values.
@@ -51,6 +55,10 @@ def user_values(values)
     key, value = row_value.strip.split(/:\s?/)
     data[key] = Float(value)
   end
+end
+
+def pluralize(word, count)
+  count == 1 ? word : "#{word}s"
 end
 
 # Validation
@@ -74,12 +82,38 @@ end
 
 if file.nil? || !File.exist?(file)
   puts "Could not find CSV file: #{file.inspect}\n"
-  puts usage_and_exit!
+  usage_and_exit!
 end
 
 # Off we go...
 # ------------
 
-CSV.read(file).each do |row|
-  import_row(server, row, pastel) unless row.first =~ /\D/
+puts 'Starting update of scenarios...'
+
+updated = 0
+failed = 0
+unidentified = 0
+
+CSV.read(file).each.with_index do |row, index|
+  if row&.first =~ /^\d+$/
+    if import_row(server, row, pastel)
+      updated += 1
+    else
+      failed += 1
+    end
+  elsif !row.first.nil?
+    puts pastel.red("Unidentified line starting with #{row.first.inspect} (line #{index + 1})")
+    unidentified += 1
+  end
+end
+
+puts
+puts "Successfully updated #{updated} #{pluralize('scenario', updated)}"
+
+if failed.positive?
+  puts "Failed to update #{failed} #{pluralize('scenario', failed)}"
+end
+
+if unidentified.positive?
+  puts "Could not identify #{unidentified} #{pluralize('line', unidentified)} in the CSV"
 end
