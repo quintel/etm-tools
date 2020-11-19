@@ -108,7 +108,10 @@ CSV.read(file).each.with_index do |row, index|
 end
 
 puts
-puts "Successfully updated #{updated} #{pluralize('scenario', updated)}"
+
+if updated.positive?
+  puts "Successfully updated #{updated} #{pluralize('scenario', updated)}"
+end
 
 if failed.positive?
   puts "Failed to update #{failed} #{pluralize('scenario', failed)}"
