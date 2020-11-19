@@ -57,10 +57,6 @@ def user_values(values)
   end
 end
 
-def pluralize(word, count)
-  count == 1 ? word : "#{word}s"
-end
-
 # Validation
 # ----------
 
@@ -108,15 +104,8 @@ CSV.read(file).each.with_index do |row, index|
 end
 
 puts
-
-if updated.positive?
-  puts "Successfully updated #{updated} #{pluralize('scenario', updated)}"
-end
-
-if failed.positive?
-  puts "Failed to update #{failed} #{pluralize('scenario', failed)}"
-end
+puts "Finished! #{updated} updated, #{failed} failed"
 
 if unidentified.positive?
-  puts "Could not identify #{unidentified} #{pluralize('line', unidentified)} in the CSV"
+  puts "Could not identify #{unidentified} line(s) in the CSV"
 end
