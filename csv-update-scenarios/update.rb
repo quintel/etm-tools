@@ -68,9 +68,9 @@ server = ARGV[0]
 file   = ARGV[1]
 pastel = Pastel.new
 
-if server == 'beta'
+if %w[staging beta].include?(server.downcase)
   server = 'https://beta-engine.energytransitionmodel.com'
-elsif server == 'production'
+elsif %[production pro live].include?(server.downcase)
   server = 'https://engine.energytransitionmodel.com'
 end
 
