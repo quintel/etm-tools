@@ -90,7 +90,7 @@ updated = 0
 failed = 0
 unidentified = 0
 
-CSV.read(file).each.with_index do |row, index|
+CSV.read(file, encoding: 'bom|utf-8').each.with_index do |row, index|
   if row&.first =~ /^\d+$/
     if import_row(server, row, pastel)
       updated += 1
