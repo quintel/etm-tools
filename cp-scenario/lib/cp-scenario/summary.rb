@@ -54,7 +54,7 @@ module CPScenario
     end
 
     def model_url
-      "#{@scenario.api.endpoint.gsub(/engine/, 'model')}/" \
+      "#{@scenario.api.endpoint.gsub(/engine/, 'pro')}/" \
         "scenarios/#{@scenario.id}"
     end
   end
