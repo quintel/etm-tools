@@ -4,7 +4,7 @@
 ### cp-scenario
 
 cp-scenario is a small application which reads data from an ETEngine scenario
-and creates a new scenario with the same input values. It optionally allow you
+and creates a new scenario with the same input values. It optionally allows you
 to specify a different dataset for the new scenario, in which case the inputs
 are scaled to suit the new region.
 
